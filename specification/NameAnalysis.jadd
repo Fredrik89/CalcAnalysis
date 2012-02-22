@@ -1,0 +1,25 @@
+import semanticlib.SymbolTable;
+
+aspect DumpTreeWithSourceLines {
+	
+	void Start.nameAnalysis() {
+		SymbolTable table = new SymbolTable();
+		nameAnalysis(table);
+	}
+	
+	void ASTNode.nameAnalysis(SymbolTable table) {
+		for (k=0; k<getNumChild(); k++) {
+			getChild(k).nameAnalysis(table);
+		}
+	}
+	
+	void IdDecl.nameAnalysis(SymbolTable table) {
+		table.add(getId().getID(), this);
+	}
+	
+	void Procedure.nameAnalysis(SymbolTable table) {
+		table.enterBlock();
+		super.nameAnalysis(table);
+		table.exitBlock();
+	}
+}
