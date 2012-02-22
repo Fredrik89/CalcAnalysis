@@ -1,0 +1,17 @@
+aspect NameAnalysis {
+	syn IdDecl IdUse.decl();
+	eq IdUse.decl() = lookup(getID());
+	
+	inh IdDecl Exp.lookup(String name);
+	eq Start.getExp().lookup(String name) = null;
+	
+	eq Let.getExp().lookup(String name) {
+		for(int k = 0; k < getNumBinding(); k++) {
+			IdDecl decl = getBinding(k).getIdDecl();
+			if(decl.getID().equals(name)) {
+				return decl;
+			}
+		}
+		return lookup(name);
+	}
+}
