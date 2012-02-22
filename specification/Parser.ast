@@ -2,16 +2,16 @@ Start ::= Procedure;
 
 
 abstract Stmt;
-Procedure: Stmt ::= Id Decl* Stmt*;
-Decl: Stmt ::= Type Id [Expr];
-Assgn: Stmt ::= Id Expr;
+Procedure: Stmt ::= <ID> IdDecl* Stmt*;
+IdDecl: Stmt ::= Type <ID> [Expr];
+Assgn: Stmt ::= IdUse Expr;
 ExprStmt: Stmt ::= Expr;
 IfStmt: Stmt ::= Expr IfPart:Stmt* ElsePart:Stmt*;
 ForStmt: Stmt ::= Init:Stmt Check:Expr Body:Stmt*;
 
 abstract Expr;
 abstract BinExpr: Expr ::= Left:Expr Right:Expr;
-FuncCall: Expr ::= Id Arg:Expr*;
+FuncCall: Expr ::= <ID> Arg:Expr*;
 Mul: BinExpr ::= Left:Expr Right:Expr;
 Add: BinExpr ::= Left:Expr Right:Expr;
 Sub: BinExpr ::= Left:Expr Right:Expr;
@@ -23,5 +23,5 @@ Gte: BinExpr ::= Left:Expr Right:Expr;
 Eq: BinExpr ::= Left:Expr Right:Expr;
 Neq: BinExpr ::= Left:Expr Right:Expr;
 Numeral: Expr ::= <NUMERAL>;
-Id: Expr ::= <ID>;
+IdUse: Expr ::= <ID>;
 Type ::= <INTEGER>;

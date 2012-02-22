@@ -106,14 +106,14 @@ void forstmt() #ForStmt: {}
   <FOR> stmt() <UNTIL> expr() <DO> stmts() #List(true) <OD>
 }
 
-void declaration() #Decl: {}
+void declaration() #IdDecl: {}
 {
   type() id() ([ <ASSIGN> expr() ]) #Opt(true)
 }
 
 void assignment() #Assgn: {}
 {
-  id() <ASSIGN> expr() 
+  iduse() <ASSIGN> expr() 
 }
 
 void expr() : {}
@@ -146,7 +146,7 @@ void term() : {}
 
 void factor() : {}
 {
-  LOOKAHEAD(2) funccall() | id() | numeral() | <LPAR> expr() <RPAR>
+  LOOKAHEAD(2) funccall() | iduse() | numeral() | <LPAR> expr() <RPAR>
 }
 
 void funccall() #FuncCall: {}
@@ -161,14 +161,19 @@ void arglist() : {}
 
 
 void numeral() #Numeral: 
-{ Token t; }          
+{ Token t; }
 {
   t = <NUMERAL>
   {jjtThis.setNUMERAL(t.image);
   }
 }
 
-void id() #Id:
+void iduse() #IdUse : {}
+{
+	id()
+}
+
+void id():
 { Token t; } 
 {
   t = <ID>
