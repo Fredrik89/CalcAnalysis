@@ -71,10 +71,10 @@
                defaultvalue="example" />
         <java classpath="bin"
               classname="${parser.program}"
-              output="${target.name}.calc.res">
-            <arg value="data/${target.name}.calc" />
+              output="${target.name}.res">
+            <arg value="data/${target.name}" />
         </java>
-        <echo>${target.name}.calc.res created using ${parser.program}</echo>
+        <echo>${target.name}.res created using ${parser.program}</echo>
     </target>
 
     <target name="clean" description="Delete generated files.">
