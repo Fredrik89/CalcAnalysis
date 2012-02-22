@@ -78,13 +78,13 @@ TOKEN: {
 /* PARSER */
 Start start() #Start: {}
 {
-  procedure() <EOF>
+  procedure() <SEMI> <EOF>
   { return jjtThis; }
 }
 
 void procedure() #Procedure: {}
 {
-  proc_header() proc_body() <SEMI>
+  proc_header() proc_body()
 }
 
 void proc_header() : {}
