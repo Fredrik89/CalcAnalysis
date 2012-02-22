@@ -1,0 +1,118 @@
+PARSER_BEGIN(Parser)
+package parser;
+public class Parser {
+  /*
+    The first and last tokens corresponding to an AST node are saved in that AST node.
+    This requires that there is a .jadd-specification which declares the 
+    first and last variables for ASTNode.
+  */
+   public void jjtreeOpenNodeScope(Node n) {
+     ((ASTNode)n).first = getToken(1);
+   }
+   public void jjtreeCloseNodeScope(Node n) {
+     ((ASTNode)n).last = getToken(0);
+   }
+}
+PARSER_END(Parser)
+
+SKIP: { " " | "\t" | "\n" | "\r" }
+
+TOKEN: {
+  < LET: "let">
+| < IN: "in">
+| < END: "end">
+| < ASK: "ask">
+| < USER: "user">
+}
+
+TOKEN: {
+  < ASSIGN: "=" >
+| < MUL: "*" >
+| < DIV: "/" >
+| < COMMA: "," >
+| < QUESTION: "?" >
+}
+
+TOKEN: {
+  < NUMERAL: (["0"-"9"])+ "." (["0"-"9"])+ >
+}
+
+TOKEN: {
+  < ID: (["A"-"Z", "a"-"z"])+ >
+}
+
+TOKEN: {
+  < ERROR: ~[] >
+}
+
+public Start start() #Start: {}  
+{
+  exp() <EOF>
+  { return jjtThis; }
+}
+
+void exp() : {}
+{
+  factor()
+  ( "*" factor() #Mul(2)
+  | "/" factor() #Div(2)
+  )*
+}
+
+void factor() : {} 
+{
+  let()
+| numeral()
+| idUse()
+| ask()
+}
+
+void let() #Let: {} 
+{
+  <LET> bindingList() <IN> exp() <END>
+}
+
+void bindingList() #List : {}
+{
+  binding() ( "," binding() )*
+}
+
+void binding() #Binding: {}
+{
+  idDecl() "=" exp()
+}
+
+void numeral() #Numeral: 
+{ Token t; }
+{
+  t = <NUMERAL>
+  { jjtThis.setNUMERAL(t.image);
+  }
+}
+
+void idDecl() #IdDecl: 
+{ Token t; }
+{
+  t = <ID>
+  { jjtThis.setID(t.image);
+  }
+}
+	
+void idUse() #IdUse: 
+{ Token t; }
+{
+  t = <ID>
+  { jjtThis.setID(t.image);
+  }
+}
+
+void ask() #Ask: {}
+{
+  <ASK> <USER> optDefaultValue() "?"
+}
+
+void optDefaultValue() #Opt: {}
+{
+  [ exp() ]
+}
+

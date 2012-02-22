@@ -1,0 +1,12 @@
+Start ::= Exp;
+
+abstract Exp;
+Mul: Exp ::= Left:Exp Right:Exp;
+Div: Exp ::= Left:Exp Right:Exp;
+Let: Exp ::= Binding* Exp;
+Binding ::= IdDecl Exp;
+Numeral: Exp ::= <NUMERAL>;
+abstract Id: Exp ::= <ID>;
+IdDecl: Id;
+IdUse: Id;
+Ask: Exp ::= [Exp];

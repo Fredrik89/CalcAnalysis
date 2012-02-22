@@ -1,118 +1,185 @@
 PARSER_BEGIN(Parser)
 package parser;
-public class Parser {
-  /*
-    The first and last tokens corresponding to an AST node are saved in that AST node.
-    This requires that there is a .jadd-specification which declares the 
-    first and last variables for ASTNode.
-  */
-   public void jjtreeOpenNodeScope(Node n) {
-     ((ASTNode)n).first = getToken(1);
-   }
-   public void jjtreeCloseNodeScope(Node n) {
-     ((ASTNode)n).last = getToken(0);
-   }
-}
+public class Parser {}
 PARSER_END(Parser)
 
-SKIP: { " " | "\t" | "\n" | "\r" }
+/* SCANNER */
 
+/* Skip whitespace */
+SKIP : { " " | "\t" | "\n" | "\r" }
+
+/* Reserved words */
 TOKEN: {
-  < LET: "let">
-| < IN: "in">
+  < PROCEDURE: "procedure" >
+| < BEGIN: "begin" >
+| < INTEGER: "integer" >
+| < FOR: "for" >
+| < UNTIL: "until" >
+| < DO: "do" >
+| < OD: "od" >
+| < IF: "if" >
+| < THEN: "then" >
+| < ELSE: "else" >
+| < FI: "fi" >
 | < END: "end">
-| < ASK: "ask">
-| < USER: "user">
 }
 
+/* Numerals */
+TOKEN: {
+  < NUMERAL: (["0"-"9"])+ >   
+}
+
+/* Operators */
 TOKEN: {
   < ASSIGN: "=" >
 | < MUL: "*" >
+| < ADD: "+" >
+| < SUB: "-" >
 | < DIV: "/" >
-| < COMMA: "," >
-| < QUESTION: "?" >
+| < GTE: ">=" >
+| < LTE: "<=" >
+| < LT:  "<" >
+| < GT:  ">" >
+| < EQ:  "==" >
+| < NEQ: "!=" >
 }
 
+/* separators */
 TOKEN: {
-  < NUMERAL: (["0"-"9"])+ "." (["0"-"9"])+ >
+  < LPAR: "(" >
+| < RPAR: ")" >
+| < SEMI: ";" >
+| < COMMA: "," >
 }
 
+/* Identifiers */
 TOKEN: {
   < ID: (["A"-"Z", "a"-"z"])+ >
 }
 
+/* Illegal */
 TOKEN: {
   < ERROR: ~[] >
 }
 
-public Start start() #Start: {}  
+
+/* PARSER */
+Start start() #Start: {}
 {
-  exp() <EOF>
+  procedure() <EOF>
   { return jjtThis; }
 }
 
-void exp() : {}
+void procedure() #Procedure: {}
 {
-  factor()
-  ( "*" factor() #Mul(2)
-  | "/" factor() #Div(2)
+  proc_header() proc_body() <SEMI>
+}
+
+void proc_header() : {}
+{
+  <PROCEDURE> id() <LPAR> ([ declaration() ( <COMMA> declaration() )* ]) #List(true) <RPAR>
+}
+
+void proc_body() : {}
+{
+  <BEGIN> stmts() #List(true) <END>
+}
+
+void stmts() : {}
+{
+   ( stmt() <SEMI>)*
+}
+
+void stmt() : {}
+{
+  ( procedure() | declaration() | LOOKAHEAD(3) assignment() | LOOKAHEAD(3) expr() #ExprStmt | ifstmt() | forstmt() )
+}
+
+void ifstmt() #IfStmt: {}
+{
+  <IF> expr() <THEN> stmts() #List(true) [<ELSE> stmts()] #List(true) <FI>
+}
+
+
+void forstmt() #ForStmt: {}
+{
+  <FOR> stmt() <UNTIL> expr() <DO> stmts() #List(true) <OD>
+}
+
+void declaration() #Decl: {}
+{
+  type() id() ([ <ASSIGN> expr() ]) #Opt(true)
+}
+
+void assignment() #Assgn: {}
+{
+  id() <ASSIGN> expr() 
+}
+
+void expr() : {}
+{
+  numexpr() [
+      <LT> numexpr() #Lt(2)
+    | <GT> numexpr() #Gt(2)
+    | <GTE> numexpr() #Gte(2)
+    | <LTE> numexpr() #Lte(2)
+    | <EQ> numexpr() #Eq(2)
+    | <NEQ> numexpr() #Neq(2)
+  ]
+}
+
+void numexpr() : {}
+{
+  term() ( 
+      <ADD> term() #Add(2) 
+    | <SUB> term() #Sub(2)
   )*
 }
 
-void factor() : {} 
+void term() : {}
 {
-  let()
-| numeral()
-| idUse()
-| ask()
+  factor() ( 
+      <MUL> factor() #Mul(2) 
+    | <DIV> factor() #Div(2) 
+  )*
 }
 
-void let() #Let: {} 
+void factor() : {}
 {
-  <LET> bindingList() <IN> exp() <END>
+  LOOKAHEAD(2) funccall() | id() | numeral() | <LPAR> expr() <RPAR>
 }
 
-void bindingList() #List : {}
+void funccall() #FuncCall: {}
 {
-  binding() ( "," binding() )*
+  id() <LPAR>  ([ arglist() ]) #List(true) <RPAR>
 }
 
-void binding() #Binding: {}
+void arglist() : {}
 {
-  idDecl() "=" exp()
+  expr() ( <COMMA> expr() )*
 }
+
 
 void numeral() #Numeral: 
-{ Token t; }
+{ Token t; }          
 {
   t = <NUMERAL>
-  { jjtThis.setNUMERAL(t.image);
+  {jjtThis.setNUMERAL(t.image);
   }
 }
 
-void idDecl() #IdDecl: 
-{ Token t; }
-{
-  t = <ID>
-  { jjtThis.setID(t.image);
-  }
-}
-	
-void idUse() #IdUse: 
-{ Token t; }
+void id() #Id:
+{ Token t; } 
 {
   t = <ID>
   { jjtThis.setID(t.image);
   }
 }
 
-void ask() #Ask: {}
+void type() #Type:
+{ Token t; } 
 {
-  <ASK> <USER> optDefaultValue() "?"
+  t = <INTEGER>
+  { jjtThis.setINTEGER(t.image);
+  }
 }
-
-void optDefaultValue() #Opt: {}
-{
-  [ exp() ]
-}
-

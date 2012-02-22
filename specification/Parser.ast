@@ -1,12 +1,27 @@
-Start ::= Exp;
+Start ::= Procedure;
 
-abstract Exp;
-Mul: Exp ::= Left:Exp Right:Exp;
-Div: Exp ::= Left:Exp Right:Exp;
-Let: Exp ::= Binding* Exp;
-Binding ::= IdDecl Exp;
-Numeral: Exp ::= <NUMERAL>;
-abstract Id: Exp ::= <ID>;
-IdDecl: Id;
-IdUse: Id;
-Ask: Exp ::= [Exp];
+
+abstract Stmt;
+Procedure: Stmt ::= Id Decl* Stmt*;
+Decl: Stmt ::= Type Id [Expr];
+Assgn: Stmt ::= Id Expr;
+ExprStmt: Stmt ::= Expr;
+IfStmt: Stmt ::= Expr IfPart:Stmt* ElsePart:Stmt*;
+ForStmt: Stmt ::= Init:Stmt Check:Expr Body:Stmt*;
+
+abstract Expr;
+abstract BinExpr: Expr ::= Left:Expr Right:Expr;
+FuncCall: Expr ::= Id Arg:Expr*;
+Mul: BinExpr ::= Left:Expr Right:Expr;
+Add: BinExpr ::= Left:Expr Right:Expr;
+Sub: BinExpr ::= Left:Expr Right:Expr;
+Div: BinExpr ::= Left:Expr Right:Expr;
+Lt: BinExpr ::= Left:Expr Right:Expr;
+Gt: BinExpr ::= Left:Expr Right:Expr;
+Lte: BinExpr ::= Left:Expr Right:Expr;
+Gte: BinExpr ::= Left:Expr Right:Expr;
+Eq: BinExpr ::= Left:Expr Right:Expr;
+Neq: BinExpr ::= Left:Expr Right:Expr;
+Numeral: Expr ::= <NUMERAL>;
+Id: Expr ::= <ID>;
+Type ::= <INTEGER>;
