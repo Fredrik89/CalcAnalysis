@@ -27,8 +27,10 @@ public class TestBuildTree extends TestCaseOutput {
         try {
             Parser parser = new Parser(new FileReader(arg));
             Start start = parser.start();
+            start.nameAnalysis();
             start.dumpTreeWithSourceLines("", System.out);
         } catch (Exception e) {
+        	e.printStackTrace();
             System.err.println(e.getMessage());
         }
     }

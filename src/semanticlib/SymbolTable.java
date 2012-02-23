@@ -4,15 +4,15 @@ import java.util.HashMap;
 /**
  * Maintains a stack of dictionaries for block-structured symbol handling.
  */
-public class SymbolTable {
-    private StackedMap top = null; // The top block on the stack.
+public class SymbolTable<K, V> {
+    private StackedMap<K, V> top = null; // The top block on the stack.
     private int n = 0; // The number of blocks on the stack
 
     /**
      * Adds the symbol (and its associated meaning) to the top dictionary. The
      * symbol will shadow existing symbols of the same name.
      */
-    public void add(String symbol, Object meaning) {
+    public void add(K symbol, V meaning) {
         if (top == null)
             throw new RuntimeException(
                     "SymbolTable.add was called without any prior call to enterBlock");
@@ -22,7 +22,7 @@ public class SymbolTable {
     /**
      * Looks up the meaning of symbol.
      */
-    public Object lookup(String symbol) {
+    public V lookup(K symbol) {
         if (top == null)
             throw new RuntimeException(
                     "SymbolTable.lookup was called without any prior call to enterBlock");
@@ -52,7 +52,7 @@ public class SymbolTable {
     /**
      * Returns true if the symbol is already in the top dictionary
      */
-    public boolean alreadyDeclared(String symbol) {
+    public boolean alreadyDeclared(K symbol) {
         if (top == null)
             throw new RuntimeException(
                     "SymbolTable.alreadyDeclared was called without any prior call to enterBlock");
@@ -66,15 +66,15 @@ public class SymbolTable {
     public int blockLevel() {
         return n;
     }
-    private static class StackedMap extends HashMap<String, Object> {
-        private StackedMap next;
+    private static class StackedMap<K, V> extends HashMap<K, V> {
+        private StackedMap<K, V> next;
 
-        private StackedMap(StackedMap next) {
+        private StackedMap(StackedMap<K, V> next) {
             this.next = next;
         }
 
-        private Object lookup(String symbol) {
-            Object result = get(symbol);
+        private V lookup(K symbol) {
+            V result = get(symbol);
             if (result == null && next != null)
                 return next.lookup(symbol);
             else

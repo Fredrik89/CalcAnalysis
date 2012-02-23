@@ -17,7 +17,7 @@ aspect DumpTreeWithSourceLines {
   public String ASTNode.tokenValue() { return ""; }
   
   public String IdUse.tokenValue() { return "\"" + getId().getID() + "\"" + startLineCol() + " -> " +
-	        decl().tokenValue(); }
+	        (decl() != null ? decl().tokenValue() : "undefined"); }
   public String IdDecl.tokenValue() { return "\"" + getId().getID() + "\"" + startLineCol(); }
   public String Numeral.tokenValue() { return "\"" + getNUMERAL() + "\""; }
   
