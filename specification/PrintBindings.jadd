@@ -17,8 +17,8 @@ aspect PrintBindings {
   public String ASTNode.tokenValue() { return ""; }
   
   public String IdUse.tokenValue() { return " " + getId().getID() + " " + startLineCol() + " -> " +
-	        (decl() != null ? decl().tokenValue() : "Missing Declaration"); }
-  public String IdDecl.tokenValue() { return simpleClassName() + ": " + getId().getID() + " " + startLineCol(); }
+	        (decl() != null ? decl().simpleClassName() + ": " + decl().tokenValue() : "Missing Declaration"); }
+  public String IdDecl.tokenValue() { return ": " + getId().getID() + " " + startLineCol(); }
   public String Numeral.tokenValue() { return "Constant: " + getNUMERAL(); }
   
 }

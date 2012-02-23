@@ -89,7 +89,7 @@ void procedure() #Procedure: {}
 
 void proc_header() : {}
 {
-  <PROCEDURE> id() <LPAR> ([ declaration() ( <COMMA> declaration() )* ]) #List(true) <RPAR>
+  <PROCEDURE> id() <LPAR> ([ param() ( <COMMA> declaration() )* ]) #List(true) <RPAR>
 }
 
 void proc_body() : {}
@@ -104,7 +104,7 @@ void stmts() : {}
 
 void stmt() : {}
 {
-  ( procedure() | declaration() | LOOKAHEAD(3) assignment() | LOOKAHEAD(3) expr() #ExprStmt | ifstmt() | forstmt() )
+  ( procedure() | iddecl() | LOOKAHEAD(3) assignment() | LOOKAHEAD(3) expr() #ExprStmt | ifstmt() | forstmt() )
 }
 
 void ifstmt() #IfStmt: {}
@@ -118,7 +118,9 @@ void forstmt() #ForStmt: {}
   <FOR> stmt() <UNTIL> expr() <DO> stmts() #List(true) <OD>
 }
 
-void declaration() #IdDecl: {}
+void param() #Param: {} {declaration()}
+void iddecl() #IdDecl: {} {declaration()}
+void declaration() : {}
 {
   type() id() ([ <ASSIGN> expr() ]) #Opt(true)
 }
