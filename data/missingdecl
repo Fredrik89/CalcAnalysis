@@ -1,0 +1,4 @@
+procedure main(integer n)
+begin
+	sum = n;
+end;

@@ -1,9 +1,12 @@
 procedure main(integer n)
 begin
-	procedure sub(integer m) begin return(m); end;
-	integer sum = 0;
-	integer k;
-	n = 2;
+	procedure subsub()
+	begin
+	procedure sub(integer m) begin return(m); end; 
+		integer sum = 0;
+		integer k;
+		n = 2;
+	end;
 	for k = 1 until k==10 do
 		k = k+1;
 		sum = sum + k * 2 + 1;
