@@ -34,6 +34,11 @@ public class TestBuildTree extends TestCaseOutput {
 		assertCorrectOutput("iddecliduse");
 	}
 
+	@Test
+	public void missingdecl() {
+		assertCorrectOutput("missingdecl");
+	}
+
 	private static void dumpTree(String arg) {
 		try {
 			Parser parser = new Parser(new FileReader(arg));
