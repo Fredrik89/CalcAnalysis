@@ -1,0 +1,25 @@
+procedure main(integer n)
+begin
+	integer shadowed;
+	procedure subsub()
+	begin
+	procedure sub(integer m) begin return(m); end; 
+		integer sum = 0;
+		integer k;
+		n = 2;
+		integer shadowed = shadowed;
+		k = shadowed;
+	end;
+	n = shadowed;
+	for k = 1 until k==10 do
+		k = k+1;
+		sum = sum + k * 2 + 1;
+		print(sum);
+		print(k);
+	od;
+	if sum + 2 * n < sum * 2 then
+		print(sum);
+	else
+		print(0);
+	fi;
+end;

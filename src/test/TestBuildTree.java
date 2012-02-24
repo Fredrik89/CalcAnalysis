@@ -30,6 +30,11 @@ public class TestBuildTree extends TestCaseOutput {
 	}
 
 	@Test
+	public void shadowing() {
+		assertCorrectOutput("shadowing");
+	}
+
+	@Test
 	public void iddecliduse() {
 		assertCorrectOutput("iddecliduse");
 	}
